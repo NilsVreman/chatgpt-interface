@@ -66,22 +66,20 @@ body {
 }
 
 .message {
-  margin: 5px;
+  margin: 7px;
   padding: 5px;
   border-radius: 10px;
   display: block;
   box-sizing: border-box;
   word-break: break-word;
   max-width: 100%; /* Adjust width as needed */
+  text-align: left; /*Align text to the left for all messages */
 }
 
 .input-message {
   background-color: #DCF8C6; /* Light green background for user's message */
-  margin-left: auto; /* Align to right */
-  text-align: right;
 }
 
 .response-message {
   background-color: #ECECEC; /* Light grey background for echoed message */
-  text-align: left;
 }
