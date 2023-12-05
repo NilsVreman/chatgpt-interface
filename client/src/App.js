@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './App.css';
 
 function App() {
@@ -35,25 +35,41 @@ function App() {
 
 function InputBox({ onSendMessage }) {
   const [input, setInput] = useState("");
+  const textareaRef = useRef(null); // Create a ref for the textarea
 
   const handleSend = () => {
-    onSendMessage(input);
+    onSendMessage(input.trim());
     setInput("");
+    // Reset the textarea height
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "inherit"; // Reset to default
+    }
   };
 
   const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
       handleSend();
     }
   };
 
+  const adjustHeight = (event) => {
+    event.target.style.height = "inherit"; // Reset height to recalculate
+    event.target.style.height = `${event.target.scrollHeight}px`; // Set new height
+  };
+
   return (
     <div className="input-box">
-      <input
-        type="text"
+      <textarea
+        ref={textareaRef} // Attach the ref to the textarea
         value={input}
-        onChange={(e) => setInput(e.target.value)}
+        onChange={(e) => {
+          setInput(e.target.value);
+          adjustHeight(e);
+        }}
         onKeyDown={handleKeyDown}
+        rows="1"
+        style={{ resize: "none", overflowY: "hidden" }} // Hide default scrollbar
       />
       <button onClick={handleSend}>Send</button>
     </div>
