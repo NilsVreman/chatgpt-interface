@@ -88,3 +88,14 @@ body {
 .response-message {
   background-color: #ECECEC; /* Light grey background for echoed message */
 }
+
+.message-header {
+  display: flex;
+  justify-content: space-between; /* Aligns children to each end */
+  align-items: center;
+  width: 100%; /* Full width of the container */
+}
+
+.spacer {
+  flex-grow: 1; /* Takes up all available space */
+}
