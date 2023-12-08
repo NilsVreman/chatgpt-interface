@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import { format } from "date-fns"; // Import date-fns for date formatting
-import './App.css';
+import { InputBox } from "./InputBox";
+import "./App.css";
+import { queryChatGpt, saveChatHistory } from "./ServerCommunicationService";
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -12,15 +14,43 @@ function App() {
     }
   }, [messages]); // Dependency array includes messages
 
-  const sendMessage = (message) => {
-    if (message) {
-      const timestamp = format(new Date(), "MMM dd - HH:mm"); // Format current date and time
-      setMessages([
-        ...messages,
-        { text: message, type: "input", time: timestamp },
-        { text: `Echo: ${message}`, type: "response", time: timestamp },
-      ]);
+  const sendMessage = async (inputMessage) => {
+    if (inputMessage) {
+      postChatMessage(createInputMessage(inputMessage));
+      const responseMessage = await queryChatGpt(inputMessage);
+      postChatMessage(
+        createResponseMessage(responseMessage),
+        async (updatedMessages) => {
+          await saveChatHistory(updatedMessages, "chat-history");
+        }
+      );
     }
+  };
+
+  const postChatMessage = (message, callback) => {
+    if (message) {
+      setMessages((messageHistory) => {
+        const updatedMessages = [...messageHistory, message];
+        if (callback) {
+          callback(updatedMessages); // Call saveChatHistory after state update
+        }
+        return updatedMessages;
+      });
+    }
+  };
+
+  const createChatMessage = (message, type) => {
+    return {
+      text: message,
+      type: type,
+      time: format(new Date(), "MMM dd - HH:mm"),
+    };
+  };
+  const createInputMessage = (message) => {
+    return createChatMessage(message, "input");
+  };
+  const createResponseMessage = (message) => {
+    return createChatMessage(message, "response");
   };
 
   return (
@@ -44,49 +74,6 @@ function App() {
         ))}
       </div>
       <InputBox onSendMessage={sendMessage} />
-    </div>
-  );
-}
-
-function InputBox({ onSendMessage }) {
-  const [input, setInput] = useState("");
-  const textareaRef = useRef(null); // Create a ref for the textarea
-
-  const handleSend = () => {
-    onSendMessage(input.trim());
-    setInput("");
-    // Reset the textarea height
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "inherit"; // Reset to default
-    }
-  };
-
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      handleSend();
-    }
-  };
-
-  const adjustHeight = (event) => {
-    event.target.style.height = "inherit"; // Reset height to recalculate
-    event.target.style.height = `${event.target.scrollHeight}px`; // Set new height
-  };
-
-  return (
-    <div className="input-box">
-      <textarea
-        ref={textareaRef} // Attach the ref to the textarea
-        value={input}
-        rows="1"
-        onChange={(e) => {
-          setInput(e.target.value);
-          adjustHeight(e);
-        }}
-        onKeyDown={handleKeyDown}
-        style={{ resize: "none", overflowY: "hidden" }} // Hide default scrollbar
-      />
-      <button onClick={handleSend}>Send</button>
     </div>
   );
 }
