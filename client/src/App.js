@@ -18,14 +18,24 @@ function App() {
     if (inputMessage) {
       postChatMessage(createInputMessage(inputMessage));
       const responseMessage = await queryChatGpt(inputMessage);
-      postChatMessage(createResponseMessage(responseMessage));
-      await saveChatHistory(messages, "chat-history");
+      postChatMessage(
+        createResponseMessage(responseMessage),
+        async (updatedMessages) => {
+          await saveChatHistory(updatedMessages, "chat-history");
+        }
+      );
     }
   };
 
-  const postChatMessage = async (message) => {
+  const postChatMessage = (message, callback) => {
     if (message) {
-      setMessages((messageHistory) => [...messageHistory, message]);
+      setMessages((messageHistory) => {
+        const updatedMessages = [...messageHistory, message];
+        if (callback) {
+          callback(updatedMessages); // Call saveChatHistory after state update
+        }
+        return updatedMessages;
+      });
     }
   };
 
