@@ -1,22 +1,31 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { format } from "date-fns"; // Import date-fns for date formatting
 import './App.css';
 
 function App() {
   const [messages, setMessages] = useState([]);
+  const chatWindowRef = useRef(null); // Create a ref for the chat window
+
+  useEffect(() => {
+    if (chatWindowRef.current) {
+      chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
+    }
+  }, [messages]); // Dependency array includes messages
 
   const sendMessage = (message) => {
     if (message) {
+      const timestamp = format(new Date(), "MMM dd - HH:mm"); // Format current date and time
       setMessages([
         ...messages,
-        { text: message, type: "input" },
-        { text: `Echo: ${message}`, type: "response" },
+        { text: message, type: "input", time: timestamp },
+        { text: `Echo: ${message}`, type: "response", time: timestamp },
       ]);
     }
   };
 
   return (
     <div className="App">
-      <div className="chat-window">
+      <div className="chat-window" ref={chatWindowRef}>
         {messages.map((msg, index) => (
           <div
             key={index}
@@ -24,6 +33,12 @@ function App() {
               msg.type === "input" ? "input-message" : "response-message"
             }`}
           >
+            <div className="message-header">
+              <strong>{msg.type === "input" ? "You" : "ChatGPT"}</strong>
+              <span className="spacer"></span> {/* Spacer element */}
+              <span>[{msg.time}]</span>
+              <br />
+            </div>
             {msg.text}
           </div>
         ))}
@@ -63,12 +78,12 @@ function InputBox({ onSendMessage }) {
       <textarea
         ref={textareaRef} // Attach the ref to the textarea
         value={input}
+        rows="1"
         onChange={(e) => {
           setInput(e.target.value);
           adjustHeight(e);
         }}
         onKeyDown={handleKeyDown}
-        rows="1"
         style={{ resize: "none", overflowY: "hidden" }} // Hide default scrollbar
       />
       <button onClick={handleSend}>Send</button>
