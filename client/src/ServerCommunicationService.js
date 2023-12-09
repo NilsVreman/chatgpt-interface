@@ -10,7 +10,7 @@ export const queryChatGpt = async (message) => {
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-    const responseMessage = await response.json()
+    const responseMessage = await response.json();
     return responseMessage.message;
   } catch (error) {
     console.error("Error sending message:", error);
@@ -27,7 +27,7 @@ export const saveChatHistory = async (chatHistory, chatHistoryName) => {
     const response = await fetch(`${serverURL}/api/save-chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify( dataToSend ),
+      body: JSON.stringify(dataToSend),
     });
     if (response.ok) {
       return await response.json();
@@ -35,6 +35,25 @@ export const saveChatHistory = async (chatHistory, chatHistoryName) => {
     console.error(`HTTP error! Status: ${response.status}`);
   } catch (error) {
     console.error("Error saving chat history:", error);
+    return null;
+  }
+};
+
+export const loadChatHistory = async (chatHistoryName) => {
+  try {
+    const response = await fetch(
+      `${serverURL}/api/load-chat?file_name=${encodeURIComponent(
+        chatHistoryName
+      )}`
+    );
+    if (!response.ok) {
+      console.error(`HTTP error! Status: ${response.status}`);
+      return null;
+    }
+    const responseMessage = await response.json();
+    return responseMessage.chatHistory;
+  } catch (error) {
+    console.error("Error loading chat history:", error);
     return null;
   }
 };

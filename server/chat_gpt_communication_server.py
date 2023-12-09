@@ -12,12 +12,13 @@ class ChatGptCommunicationServer:
         self.setup_routes()
 
     def setup_routes(self):
-        self.app.add_url_rule('/api/gpt', 'handle_request', self.handle_request, methods=['POST'])
-        self.app.add_url_rule('/api/save-chat', 'save_chat_history', self.save_chat_history, methods=['POST'])
+        self.app.add_url_rule("/api/gpt", "handle_request", self.handle_request, methods=["POST"])
+        self.app.add_url_rule("/api/save-chat", "save_chat_history", self.save_chat_history, methods=["POST"])
+        self.app.add_url_rule("/api/load-chat", "load_chat_history", self.load_chat_history, methods=["GET"])
 
     def handle_request(self):
         try:
-            message = request.json['message']
+            message = request.json["message"]
             response_message = f"Server received: {message}"
         except (TypeError, KeyError):
             response_message = "No message received or invalid format"
@@ -26,10 +27,10 @@ class ChatGptCommunicationServer:
     
     def save_chat_history(self):
         try:
-            chat_history_name = request.json['chatHistoryName']
-            chat_history = request.json['chatHistory']
+            chat_history_name = request.json["chatHistoryName"]
+            chat_history = request.json["chatHistory"]
 
-            file_path = os.path.join(self._history_dir, f'{chat_history_name}.json')
+            file_path = os.path.join(self._history_dir, f"{chat_history_name}.json")
             with open(file_path, 'w') as file:
                 json.dump(chat_history, file)
 
@@ -41,9 +42,24 @@ class ChatGptCommunicationServer:
         except Exception as e:
             return jsonify({"status": "error", "message": str(e)}), 500
 
-    def run(self, host="localhost", port=5000, debug=True):
-        self.app.run(debug=debug, host=host, port=port)
+    def load_chat_history(self):
+        try:
+            chat_history_name = request.args.get("file_name")
+            file_path = os.path.join(self._history_dir, f"{chat_history_name}.json")
+            with open(file_path, 'r') as file:
+                chat_history = json.load(file)
 
-if __name__ == '__main__':
+            return jsonify({"status": "success", "chatHistory": chat_history})
+
+        except FileNotFoundError:
+            return jsonify({"status": "error", "message": "File not found"}), 404
+
+        except Exception as e:
+            return jsonify({"status": "error", "message": str(e)}), 500
+
+    def run(self, host="localhost", port=5000, debug=True):
+        self.app.run(debug=False, host=host, port=port)
+
+if __name__ == "__main__":
     server = ChatGptCommunicationServer()
     server.run()
