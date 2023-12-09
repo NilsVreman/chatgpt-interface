@@ -2,7 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { format } from "date-fns"; // Import date-fns for date formatting
 import { InputBox } from "./InputBox";
 import "./App.css";
-import { queryChatGpt, saveChatHistory } from "./ServerCommunicationService";
+import {
+  queryChatGpt,
+  saveChatHistory,
+  loadChatHistory,
+} from "./ServerCommunicationService";
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -13,6 +17,28 @@ function App() {
       chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
     }
   }, [messages]); // Dependency array includes messages
+
+  useEffect(() => {
+    const fetchChatHistory = async () => {
+      try {
+        const chatHistory = await loadChatHistory("chat-history");
+        if (chatHistory) {
+          setMessages(chatHistory);
+        } else {
+          setMessages([
+            createChatMessage(
+              "Welcome to ChatGPT! Type a message to start chatting.",
+              "response"
+            ),
+          ]);
+        }
+      } catch (error) {
+        console.error("Error loading chat history:", error);
+      }
+    };
+
+    fetchChatHistory();
+  }, []);
 
   const sendMessage = async (inputMessage) => {
     if (inputMessage) {
