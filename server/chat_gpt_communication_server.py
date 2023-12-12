@@ -14,6 +14,14 @@ class ChatGptCommunicationServer:
             api_key=api_key
         )
 
+        # Context setup
+        self.context_length = 7 # Keep this number odd to always have the a user message first in the context query
+        self.system_role = {
+            "role": "system",
+            "content": "You are an AI assistant. Answer consicely, but accurately."
+        }
+        self.context = []
+
         self.history_dir = "chat_history"
         os.makedirs(self.history_dir, exist_ok=True)
 
@@ -29,7 +37,10 @@ class ChatGptCommunicationServer:
     def handle_gpt_query(self):
         try:
             message = request.json["message"]
-            response = self.gptService.send_request(message)
+            context = self.update_context("user", message)
+
+            response = self.gptService.send_context(context)
+            self.update_context("assistant", response)
         except (TypeError, KeyError):
             response = "No message received or invalid format"
 
@@ -59,6 +70,12 @@ class ChatGptCommunicationServer:
             with open(file_path, 'r') as file:
                 chat_history = json.load(file)
 
+            # Update internal context upon chat history load
+            for message in chat_history:
+                self.update_context(
+                    "assistant" if message["type"] == "response" else "user",
+                    message["text"])
+
             return jsonify({"status": "success", "chatHistory": chat_history})
 
         except FileNotFoundError:
@@ -69,6 +86,13 @@ class ChatGptCommunicationServer:
 
     def run(self, host="localhost", port=5000, debug=True):
         self.app.run(debug=False, host=host, port=port)
+
+    def update_context(self, role: str, message: str):
+        self.context = ( # Update internal context (rotating messages to and from the system)
+            self.context[-(self.context_length - 1):] +
+            [{ "role": role, "content": message }]
+        )
+        return [self.system_role] + self.context
 
     @staticmethod
     def setup_argument_parser():
