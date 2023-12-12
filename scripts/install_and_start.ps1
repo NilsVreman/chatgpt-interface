@@ -1,5 +1,8 @@
-Write-Host "Starting the installation.ps1 script..."
-& .\installation.ps1
+Write-Host "Starting the install_tools.ps1 script..."
+Start-Process -FilePath "install_tools.ps1" -Wait
+
+Write-Host "Starting the update_dependencies.ps1 script..."
+Start-Process -FilePath "update_dependencies.ps1" -Wait
 
 Write-Host "Starting the start.ps1 script..."
-& .\start.ps1
+Start-Process -FilePath "start.ps1" -Wait
