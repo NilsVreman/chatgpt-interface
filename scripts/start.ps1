@@ -3,7 +3,7 @@ $clientPath = "..\client"
 $serverPath = "..\server"
 $apiKey = $env:OPENAI_API_KEY
 
-Start-Process -FilePath "set_env_variables_locally.ps1" -Wait
+$env:Path = "C:\Program Files\nodejs;$env:Appdata\..\Local\Programs\Python\Python312\Scripts;$env:Appdata\..\Local\Programs\Python\Python312;$env:Path"
 
 Write-Host "Note: This script requires the OpenAI API key to be set as an environment variable named OPENAI_API_KEY."
 Write-Host "Note: This script uses the base URL https://openai-nonfunsbx-pprd-01.openai.azure.com/. If you want to use a different base URL, please edit the script."
