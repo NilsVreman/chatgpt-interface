@@ -11,7 +11,7 @@ class ChatGptAzureCommunicationService:
     def send_request(self, message: str) -> str:
         try:
             response = self.client.chat.completions.create(
-                model="gpt-35-turbo-digital-buildings",
+                model="gpt-4-32-digital-buildings",
                 messages = [
                     {
                         "role": "user",
