@@ -1,0 +1,1 @@
+$env:Path = "C:\Program Files\nodejs;$env:Appdata\..\Local\Programs\Python\Python312\Scripts;$env:Appdata\..\Local\Programs\Python\Python312;$env:Path"
