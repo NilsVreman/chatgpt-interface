@@ -8,16 +8,12 @@ class ChatGptAzureCommunicationService:
             api_key=api_key
         )
 
-    def send_request(self, message: str) -> str:
+    # Context is a list of dictionaries as such: [{"role": user, "content": "Hello"}, {"role": "assistant", "content": "Hi"}]
+    def send_context(self, context):
         try:
             response = self.client.chat.completions.create(
                 model="gpt-4-32-digital-buildings",
-                messages = [
-                    {
-                        "role": "user",
-                        "content": message
-                    }
-                ],
+                messages=context
             )
         except Exception as e:
             return f"Invalid request, error: {e}"
