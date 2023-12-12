@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { format } from "date-fns"; // Import date-fns for date formatting
 import { InputBox } from "./InputBox";
+import ReactMarkdown from "react-markdown";
 import "./App.css";
 import {
   queryChatGpt,
@@ -91,11 +92,11 @@ function App() {
           >
             <div className="message-header">
               <strong>{msg.type === "input" ? "You" : "ChatGPT"}</strong>
-              <span className="spacer"></span> {/* Spacer element */}
+              <span className="spacer"></span>
               <span>[{msg.time}]</span>
               <br />
             </div>
-            {msg.text}
+            <ReactMarkdown>{msg.text}</ReactMarkdown> {/* Markdown rendering */}
           </div>
         ))}
       </div>
