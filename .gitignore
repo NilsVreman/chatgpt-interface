@@ -1,0 +1,6 @@
+docs/style/
+docs/*.tex
+docs/preamble/*.tex
+docs/*.bib
+docs/Makefile
+docs/*.md
