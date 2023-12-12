@@ -7,7 +7,7 @@ Write-Host "Note: This script requires the OpenAI API key to be set as an enviro
 Write-Host "Note: This script uses the base URL https://openai-nonfunsbx-pprd-01.openai.azure.com/. If you want to use a different base URL, please edit the script."
 
 # Command to start the Python server
-$serverCommand = "python chat_gpt_communication_server.py --api-base https://openai-nonfunsbx-pprd-01.openai.azure.com/ --api-version 2023-07-01-preview --api-key $apiKey"
+$serverCommand = "~\AppData\Local\Programs\Python\Python312\python chat_gpt_communication_server.py --api-base https://openai-nonfunsbx-pprd-01.openai.azure.com/ --api-version 2023-07-01-preview --api-key $apiKey"
 # Command to start the Node.js client
 $clientCommand = "npm start"
 

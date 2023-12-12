@@ -1,14 +1,14 @@
 Write-Host "Starting the installation process..."
 
 # Check if Python is installed
-Write-Host "Installing Python..."
+Write-Host "Installing Python in quiet mode locally..."
 # Download Python Installer
 Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.12.1/python-3.12.1-amd64.exe" -OutFile "python-3.12.1-amd64.exe"
 # Run Installer
-Start-Process -FilePath .\python-3.12.1-amd64.exe -Args "/quiet InstallAllUsers=1 PrependPath=1" -Wait
+Start-Process -FilePath .\python-3.12.1-amd64.exe -Args "/quiet" -Wait
 Remove-Item .\python-3.12.1-amd64.exe
 
-Write-Host "Installing Node.js..."
+Write-Host "Installing Node.js in quiet mode..."
 # Download Node.js Installer
 Invoke-WebRequest -Uri "https://nodejs.org/dist/v20.10.0/node-v20.10.0-x64.msi" -OutFile "node-v20.10.0-x64.msi"
 # Run Installer
@@ -22,7 +22,7 @@ $serverPath = Join-Path $currentPath "..\server"
 
 Write-Host "Installing Python dependencies..."
 cd $serverPath
-pip install -r requirements.txt
+~\AppData\Local\Programs\Python\Python312\Scripts\pip install -r requirements.txt
 
 Write-Host "Installing Node.js dependencies..."
 cd $clientPath
