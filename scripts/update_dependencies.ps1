@@ -3,7 +3,7 @@ $currentPath = Get-Location
 $clientPath = Join-Path $currentPath "..\client"
 $serverPath = Join-Path $currentPath "..\server"
 
-$env:Path = "C:\Program Files\nodejs;$env:Appdata\..\Local\Programs\Python\Python312\Scripts;$env:Appdata\..\Local\Programs\Python\Python312;$env:Path"
+Start-Process -FilePath "set_env_variables_locally.ps1" -Wait
 
 Write-Host "Installing Python dependencies..."
 cd $serverPath
