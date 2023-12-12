@@ -21,8 +21,9 @@ if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
 }
 
 # Auxiliary variables
-$clientPath = "..\client"
-$serverPath = "..\server"
+$currentPath = Get-Location
+$clientPath = Join-Path $currentPath "..\client"
+$serverPath = Join-Path $currentPath "..\server"
 
 Write-Host "Installing Python dependencies..."
 cd $serverPath
@@ -32,4 +33,5 @@ Write-Host "Installing Node.js dependencies..."
 cd $clientPath
 npm install
 
+cd $currentPath
 Write-Host "Installation and setup complete!"
