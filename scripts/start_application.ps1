@@ -33,7 +33,7 @@ function Set-SeProxy {
 $currentPath = $PSScriptroot
 $clientPath = Join-Path $PSScriptroot "..\client"
 $serverPath = Join-Path $PSScriptroot "..\server"
-$apiKey = "611dff392d7a4f3780f84060b3d6bc9e"
+$apiKey = $env:OPENAI_API_KEY
 
 # Command to start the Python server
 $serverCommand = "python chat_gpt_communication_server.py --api-base https://openai-nonfunsbx-pprd-01.openai.azure.com/ --api-version 2023-07-01-preview --api-key $apiKey"
